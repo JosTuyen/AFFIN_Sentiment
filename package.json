@@ -1,0 +1,22 @@
+{
+  "name": "api_first",
+  "version": "1.0.0",
+  "description": "test with first API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosTuyen/API_with_Nodejs_Express.git"
+  },
+  "author": "Tuyen Do",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JosTuyen/API_with_Nodejs_Express/issues"
+  },
+  "homepage": "https://github.com/JosTuyen/API_with_Nodejs_Express#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
