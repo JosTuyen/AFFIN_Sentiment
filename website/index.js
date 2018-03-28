@@ -1,29 +1,51 @@
-console.log("starting");
-
-var display = document.getElementById('display');
-var ctx = display.getContext("2d");
-
 var request = new XMLHttpRequest();
-request.open('GET', 'http://localhost:3000/all');
+
+var txt = document.querySelector('#txt');
+
+request.open('GET', "http://localhost:3000/all");
 request.responseType = 'json';
 request.send();
 request.onload = function () {
   var data = request.response;
-  var keys = Object.keys(data);
-  for (let i = 0; i < keys.length; i++) {
-    let x = Math.random()*350;
-    let y = Math.random()*350;
-    ctx.fillText(keys[i],x ,y, 55);
-  }
-};
+  txt.oninput = function () {
+    var score = 0;
+    var words = txt.value.split(/\W/);
+    var scoreWord = [];
+    var listWord = "";
+    for (var i = 0; i < words.length; i++) {
+      var word = words[i].toLowerCase();
+      if (data.additionWords.hasOwnProperty(word)) {
+        score += data.additionWords[word];
+        scoreWord.push(word + "  : "+data.additionWords[word]);
+      }else if (data.Words.hasOwnProperty(word)) {
+        score += data.Words[word];
+        scoreWord.push(word + " : "+data.Words[word]);
+      }
+    }
+    for (var j = 0; j <= scoreWord.length/3 + 1; j++) {
+      listWord += "<tr>";
+      for (var k = 0; k < 3; k++)
+        if (3*j+k<scoreWord.length)
+          listWord +="<td>" + scoreWord[3*j+k].toString() + "</td>";
 
-var submit = document.querySelector("#submit");
-function submitAnime() {
-  var anime = document.querySelector("#anime").value;
-  var score = document.querySelector("#score").value;
-  request.open('GET', "http://localhost:3000/add/"+anime+"/"+score);
-  request.send();
-  request.onload = function () {
-    console.log(anime+"  "+score);
+      listWord += "</tr>";
+    }
+
+    document.querySelector('#score').innerHTML = "Score : " + score;
+    document.querySelector('#comparative').innerHTML = "Comparative : "
+    + Math.round(score/words.length*100)/100;
+    document.querySelector('#wordlist').innerHTML = listWord;
+  };
+}
+
+function submit() {
+  var nWord = document.querySelector('#nWord').value;
+  var nScore = document.querySelector('#nScore').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET',"http://localhost:3000/add/"+nWord+"/"+nScore);
+  xhr.responseType = 'text';
+  xhr.send();
+  xhr.onload = function () {
+    console.log(xhr.response);
   }
 }

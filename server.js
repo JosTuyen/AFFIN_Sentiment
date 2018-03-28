@@ -6,10 +6,12 @@ var app = express();
 //listenning gate 3000
 var server = app.listen(3000, listenning);
 //read data.json
-var database = fs.readFileSync('data.json');
-var data = JSON.parse(database);
 
-console.log(data);
+var affinData = fs.readFileSync('AFINN-111.json');
+var additionData = fs.readFileSync('additionList.json');
+var words = JSON.parse(affinData);
+var newWords = JSON.parse(additionData);
+
 console.log("starting server");
 function listenning() {
   console.log("listenning");
@@ -17,22 +19,35 @@ function listenning() {
 //fletch static html file
 app.use(express.static('website'));
 //===============RESTful routers==================
-app.get('/add/:anime/:score',addAnime);
 
-function addAnime(request, response) {
-  var anime = request.params.anime;
-  var score = request.params.score;
-  data[anime] = score;
-  var converted = JSON.stringify(data, null, 2);
-  //save to JSON file
-  fs.writeFile('data.json',converted,error);
-  function error(err) {
-    console.log('all set.')
-  }
-  response.send("Everything is ok!");
+app.get('/all',sendAll);
+
+function sendAll(request, response) {
+  var data = {
+    additionWords : newWords,
+    Words : words
+  };
+  response.send(data);
 }
 
-app.get('/:manga/:num',sendManga);
+//app.post('/analyze',analyzeThis);
+
+app.get('/add/:nWord/:nScore',addWord);
+
+function addWord(request, response) {
+  var nWord = request.params.nWord;
+  var nScore = Number(request.params.nScore);
+  newWords[nWord] = nScore;
+  var converted = JSON.stringify(newWords, null, 2);
+  //save to JSON file
+  fs.writeFile('additionList.json',converted,error);
+  function error(err) {
+    console.log('Update.')
+  }
+  response.send("Thanks for word :)");
+}
+
+/*app.get('/:manga/:num',sendManga);
 
 function sendManga(request, response) {
   var input = request.params;
@@ -47,4 +62,4 @@ app.get('/all',sendAll);
 
 function sendAll(request, response) {
   response.send(data);
-}
+}*/
